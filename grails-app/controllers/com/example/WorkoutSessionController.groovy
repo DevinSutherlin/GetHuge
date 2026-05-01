@@ -8,7 +8,10 @@ class WorkoutSessionController extends AuthenticatedController {
     static allowedMethods = [save: 'POST', update: 'POST', delete: 'POST']
 
     def index() {
-        User me = currentUser()
+        User me = requireCurrentUser()
+        if (!me) {
+            return
+        }
         [workoutSessionList: WorkoutSession.list().findAll { it.userId == me.id }.sort { a, b -> b.performedOn <=> a.performedOn }]
     }
 
@@ -27,8 +30,13 @@ class WorkoutSessionController extends AuthenticatedController {
     }
 
     def save() {
+        User me = requireCurrentUser()
+        if (!me) {
+            return
+        }
+
         WorkoutSession workoutSession = new WorkoutSession(params)
-        workoutSession.user = currentUser()
+        workoutSession.user = me
 
         if (!workoutSession.save(flush: true)) {
             render view: 'create', model: [workoutSession: workoutSession]
@@ -50,6 +58,11 @@ class WorkoutSessionController extends AuthenticatedController {
     }
 
     def update(Long id) {
+        User me = requireCurrentUser()
+        if (!me) {
+            return
+        }
+
         WorkoutSession workoutSession = ownedWorkoutSession(id)
         if (!workoutSession) {
             notFound()
@@ -57,7 +70,7 @@ class WorkoutSessionController extends AuthenticatedController {
         }
 
         workoutSession.properties = params
-        workoutSession.user = currentUser()
+        workoutSession.user = me
 
         if (!workoutSession.save(flush: true)) {
             render view: 'edit', model: [workoutSession: workoutSession]
@@ -82,7 +95,10 @@ class WorkoutSessionController extends AuthenticatedController {
 
     protected WorkoutSession ownedWorkoutSession(Long id) {
         WorkoutSession workoutSession = WorkoutSession.get(id)
-        User user = currentUser()
+        User user = requireCurrentUser()
+        if (!user) {
+            return null
+        }
         workoutSession?.userId == user.id ? workoutSession : null
     }
 

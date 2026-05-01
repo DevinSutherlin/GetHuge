@@ -7,7 +7,7 @@ class DomainConstraintsSpec extends Specification implements DataTest {
 
     @Override
     Class<?>[] getDomainClassesToMock() {
-        [User, Role, UserRole, WorkoutSession, Exercise, ExerciseSet, ProgressPhoto] as Class<?>[]
+        [User, Role, UserRole, WorkoutSession, Exercise, ExerciseSet, ProgressPhoto, BodyWeightEntry] as Class<?>[]
     }
 
     void "user requires core identity fields and basic auth flags default correctly"() {
@@ -148,5 +148,22 @@ class DomainConstraintsSpec extends Specification implements DataTest {
 
         then:
         photo.validate()
+    }
+
+    void "body weight entry requires a date and a positive weight"() {
+        given:
+        def user = new User(
+                username: 'scale1',
+                email: 'scale1@example.com',
+                password: 'strongpass',
+                displayName: 'Scale One'
+        )
+
+        expect:
+        new BodyWeightEntry(
+                user: user,
+                measuredOn: new Date(),
+                weight: 182.4G
+        ).validate()
     }
 }

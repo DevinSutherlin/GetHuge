@@ -9,7 +9,10 @@ class ProfileController extends AuthenticatedController {
     static allowedMethods = [save: 'POST']
 
     def complete() {
-        User user = currentUser()
+        User user = requireCurrentUser()
+        if (!user) {
+            return
+        }
         [profileCompletionCommand: new ProfileCompletionCommand(
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -19,7 +22,11 @@ class ProfileController extends AuthenticatedController {
 
     @Transactional
     def save(ProfileCompletionCommand profileCompletionCommand) {
-        User user = currentUser()
+        User user = requireCurrentUser()
+        if (!user) {
+            return
+        }
+
         if (profileCompletionCommand.hasErrors()) {
             render view: 'complete', model: [profileCompletionCommand: profileCompletionCommand]
             return

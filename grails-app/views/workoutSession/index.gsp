@@ -31,7 +31,7 @@
                 <g:each in="${workoutSessionList}" var="workoutSession">
                     <tr>
                         <td>${workoutSession.title}</td>
-                        <td>${workoutSession.performedOn?.format('MMM d, yyyy')}</td>
+                        <td>${workoutSession.performedOn ? new java.text.SimpleDateFormat('MMM d, yyyy').format(workoutSession.performedOn) : ''}</td>
                         <td>${workoutSession.durationMinutes ?: 0} min</td>
                         <td class="text-end">
                             <div class="btn-group btn-group-sm" role="group">

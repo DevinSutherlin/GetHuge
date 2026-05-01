@@ -8,7 +8,10 @@ class ExerciseController extends AuthenticatedController {
     static allowedMethods = [save: 'POST', update: 'POST', delete: 'POST']
 
     def index() {
-        User user = currentUser()
+        User user = requireCurrentUser()
+        if (!user) {
+            return
+        }
         [exerciseList: Exercise.where { owner == user }.list(sort: 'name', order: 'asc')]
     }
 
@@ -27,8 +30,13 @@ class ExerciseController extends AuthenticatedController {
     }
 
     def save() {
+        User user = requireCurrentUser()
+        if (!user) {
+            return
+        }
+
         Exercise exercise = new Exercise(params)
-        exercise.owner = currentUser()
+        exercise.owner = user
 
         if (!exercise.save(flush: true)) {
             render view: 'create', model: [exercise: exercise]
@@ -50,6 +58,11 @@ class ExerciseController extends AuthenticatedController {
     }
 
     def update(Long id) {
+        User user = requireCurrentUser()
+        if (!user) {
+            return
+        }
+
         Exercise exercise = ownedExercise(id)
         if (!exercise) {
             notFound()
@@ -57,7 +70,7 @@ class ExerciseController extends AuthenticatedController {
         }
 
         exercise.properties = params
-        exercise.owner = currentUser()
+        exercise.owner = user
 
         if (!exercise.save(flush: true)) {
             render view: 'edit', model: [exercise: exercise]
@@ -82,7 +95,10 @@ class ExerciseController extends AuthenticatedController {
 
     protected Exercise ownedExercise(Long id) {
         Exercise exercise = Exercise.get(id)
-        User user = currentUser()
+        User user = requireCurrentUser()
+        if (!user) {
+            return null
+        }
         exercise?.ownerId == user.id ? exercise : null
     }
 

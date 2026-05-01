@@ -15,13 +15,20 @@ class ProgressPhotoController extends AuthenticatedController {
     static allowedMethods = [save: 'POST', delete: 'POST']
 
     def index() {
-        User me = currentUser()
+        User me = requireCurrentUser()
+        if (!me) {
+            return
+        }
         [progressPhotoList: ProgressPhoto.where { user == me }.list(sort: 'dateCreated', order: 'desc')]
     }
 
     @Transactional
     def save() {
-        User me = currentUser()
+        User me = requireCurrentUser()
+        if (!me) {
+            return
+        }
+
         MultipartFile uploadedFile = request.getFile('photo')
         String caption = params.caption?.trim()
 
@@ -112,7 +119,10 @@ class ProgressPhotoController extends AuthenticatedController {
 
     protected ProgressPhoto ownedProgressPhoto(Long id) {
         ProgressPhoto progressPhoto = ProgressPhoto.get(id)
-        User user = currentUser()
+        User user = requireCurrentUser()
+        if (!user) {
+            return null
+        }
         progressPhoto?.userId == user.id ? progressPhoto : null
     }
 

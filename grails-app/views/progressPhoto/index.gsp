@@ -55,7 +55,7 @@
                             data-bs-target="#progressPhotoModal"
                             data-photo-src="${createLink(controller: 'progressPhoto', action: 'image', id: progressPhoto.id)}"
                             data-photo-caption="${progressPhoto.caption ?: progressPhoto.originalFilename}"
-                            data-photo-date="${progressPhoto.dateCreated?.format('MMM d, yyyy')}">
+                            data-photo-date="${progressPhoto.dateCreated ? new java.text.SimpleDateFormat('MMM d, yyyy').format(progressPhoto.dateCreated) : ''}">
                         <img src="${createLink(controller: 'progressPhoto', action: 'image', id: progressPhoto.id)}"
                              class="card-img-top"
                              style="object-fit: cover; height: 240px;"
@@ -64,7 +64,7 @@
                     <div class="card-body">
                         <div class="fw-semibold">${progressPhoto.caption ?: progressPhoto.originalFilename}</div>
                         <div class="small text-body-secondary">
-                            Uploaded ${progressPhoto.dateCreated?.format('MMM d, yyyy')}
+                            Uploaded ${progressPhoto.dateCreated ? new java.text.SimpleDateFormat('MMM d, yyyy').format(progressPhoto.dateCreated) : ''}
                         </div>
                     </div>
                     <div class="card-footer bg-white border-top-0 pt-0">

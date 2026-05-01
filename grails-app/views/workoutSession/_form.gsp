@@ -12,7 +12,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label" for="performedOn">Performed on</label>
-            <g:field type="date" name="performedOn" value="${workoutSession?.performedOn ? workoutSession.performedOn.format('yyyy-MM-dd') : ''}" class="form-control"/>
+            <g:field type="date" name="performedOn" value="${workoutSession?.performedOn ? new java.text.SimpleDateFormat('yyyy-MM-dd').format(workoutSession.performedOn) : ''}" class="form-control"/>
         </div>
         <div class="mb-3">
             <label class="form-label" for="durationMinutes">Duration minutes</label>
